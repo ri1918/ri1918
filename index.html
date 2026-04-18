@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的信息中转站</title>
+    <style>
+        /* 这里是给网页加点简单的样式，让它更好看 */
+        body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>信息中转站</h2>
+    <form id="myForm">
+        <textarea id="userMessage" rows="5" placeholder="在这里输入你想提交的信息..."></textarea>
+        <button type="submit">提交信息</button>
+    </form>
+    <div id="message" style="margin-top:20px;"></div>
+
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userMessage = document.getElementById('userMessage').value;
+            if(userMessage.trim() === '') {
+                alert('请输入信息后再提交');
+                return;
+            }
+            // 这里显示一个提示信息
+            document.getElementById('message').innerHTML = '<p>✅ 信息已收到（演示模式，实际未存储）！</p>';
+            // 清空文本框
+            document.getElementById('userMessage').value = '';
+            // 你也可以把 userMessage 这个变量里的内容发送给别的地方
+            console.log('提交的信息是：', userMessage);
+        });
+    </script>
+</body>
+</html>
