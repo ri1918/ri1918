@@ -2,38 +2,30 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>我的信息中转站</title>
+    <title>信息中转站</title>
     <style>
-        /* 这里是给网页加点简单的样式，让它更好看 */
+        /* 简单的样式，让页面更好看 */
         body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
         textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
         button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
+        /* 为提交后的提示信息添加样式 */
+        #message { margin-top:20px; color: green; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h2>信息中转站</h2>
-    <form id="myForm">
-        <textarea id="userMessage" rows="5" placeholder="在这里输入你想提交的信息..."></textarea>
-        <button type="submit">提交信息</button>
+    <h2>📧 给我留言</h2>
+    <!-- 这是更新后的表单，action里使用了你专属的表单ID -->
+    <form action="https://formspree.io/f/xqapkyjg" method="POST">
+        <!-- 这里增加了一个隐藏字段，用来标注信息来源，方便识别 -->
+        <input type="hidden" name="_subject" value="来自你的个人网站的新留言！" />
+        <!-- 增加一个用于填写发件人邮箱的字段（可选），方便你回复 -->
+        <input type="email" name="email" placeholder="你的邮箱 (选填)" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">
+        <!-- 主要的留言内容框 -->
+        <textarea name="message" rows="5" placeholder="在这里输入你想说的话..." style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;"></textarea>
+        <button type="submit">📨 提交信息</button>
     </form>
-    <div id="message" style="margin-top:20px;"></div>
-
-    <script>
-        document.getElementById('myForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const userMessage = document.getElementById('userMessage').value;
-            if(userMessage.trim() === '') {
-                alert('请输入信息后再提交');
-                return;
-            }
-            // 这里显示一个提示信息
-            document.getElementById('message').innerHTML = '<p>✅ 信息已收到（演示模式，实际未存储）！</p>';
-            // 清空文本框
-            document.getElementById('userMessage').value = '';
-            // 你也可以把 userMessage 这个变量里的内容发送给别的地方
-            console.log('提交的信息是：', userMessage);
-        });
-    </script>
+    <!-- 用于显示提交结果的提示区域 -->
+    <div id="message"></div>
 </body>
 </html>
