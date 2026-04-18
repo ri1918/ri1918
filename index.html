@@ -11,43 +11,73 @@
         #message { margin-top:20px; font-weight: bold; }
         .error { color: red; }
         .success { color: green; }
+        .char-count { font-size: 14px; color: #666; text-align: right; margin-top: -8px; margin-bottom: 10px; }
+        .char-count.warning { color: orange; }
+        .char-count.danger { color: red; font-weight: bold; }
     </style>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function(){
-            // 替换成你的 Public Key
+            // 你的 Public Key
             emailjs.init({
                 publicKey: "B6O-nqJ30zPB7kgM1",
             });
         })();
+
+        // 实时更新字符计数
+        function updateCharCount() {
+            const textarea = document.getElementById('messageContent');
+            const countSpan = document.getElementById('charCount');
+            const currentLength = textarea.value.length;
+            const maxLength = 23000;
+            const remaining = maxLength - currentLength;
+            countSpan.textContent = remaining;
+
+            // 根据剩余字符数改变样式
+            const countDiv = document.getElementById('charCountDisplay');
+            if (remaining < 0) {
+                countDiv.className = 'char-count danger';
+            } else if (remaining < 500) {
+                countDiv.className = 'char-count warning';
+            } else {
+                countDiv.className = 'char-count';
+            }
+        }
 
         function sendMessage(event) {
             event.preventDefault();
 
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerText;
-            submitBtn.innerText = '发送中...';
-            submitBtn.disabled = true;
-
             const messageContent = document.getElementById('messageContent').value;
+            const maxLength = 23000;
 
+            // 检查是否为空
             if (!messageContent.trim()) {
                 document.getElementById('result').innerHTML = '<span class="error">请填写留言内容</span>';
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
                 return;
             }
+
+            // 检查长度是否超过限制（防止通过某些方式绕过 maxlength）
+            if (messageContent.length > maxLength) {
+                document.getElementById('result').innerHTML = `<span class="error">留言内容超过限制（最多 ${maxLength} 字符），当前 ${messageContent.length} 字符，请删减后重试。</span>`;
+                return;
+            }
+
+            submitBtn.innerText = '发送中...';
+            submitBtn.disabled = true;
 
             // 只传递留言内容
             const templateParams = {
                 message: messageContent
             };
 
-            // 替换成你的 Service ID 和 Template ID
+            // 你的 Service ID 和 Template ID
             emailjs.send('service_ri1918', 'template_ri1918', templateParams)
                 .then(function(response) {
                     document.getElementById('result').innerHTML = '<span class="success">✅ 留言已发送！</span>';
                     document.getElementById('messageForm').reset();
+                    updateCharCount(); // 重置计数显示
                 }, function(error) {
                     document.getElementById('result').innerHTML = '<span class="error">❌ 发送失败，请稍后重试。</span>';
                     console.error(error);
@@ -57,12 +87,21 @@
                     submitBtn.disabled = false;
                 });
         }
+
+        // 页面加载完成后初始化计数
+        window.onload = function() {
+            updateCharCount();
+            // 监听输入事件，实时更新计数
+            const textarea = document.getElementById('messageContent');
+            textarea.addEventListener('input', updateCharCount);
+        };
     </script>
 </head>
 <body>
     <h2>📝 给我留言</h2>
     <form id="messageForm" onsubmit="sendMessage(event)">
-        <textarea id="messageContent" rows="6" placeholder="在这里输入你的留言..." required></textarea>
+        <textarea id="messageContent" rows="6" placeholder="在这里输入你的留言...（最多23000字符）" maxlength="23000" required></textarea>
+        <div id="charCountDisplay" class="char-count">剩余字符：<span id="charCount">23000</span></div>
         <button type="submit" id="submitBtn">✉️ 提交留言</button>
     </form>
     <div id="result"></div>
