@@ -2,37 +2,35 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>信息中转站 - EmailJS版</title>
+    <title>信息中转站 - 测试版</title>
     <style>
         body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
-        textarea, input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        textarea, input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #0056b3; }
         #message { margin-top:20px; font-weight: bold; }
         .error { color: red; }
         .success { color: green; }
     </style>
-    <!-- 引入EmailJS SDK -->
+    <!-- 引入 EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function(){
-            // 第一步：用你的Public Key初始化EmailJS
+            // 【重要】把 "你的Public Key" 替换成你在 EmailJS 后台拿到的真实公钥
             emailjs.init({
                 publicKey: "B6O-nqJ30zPB7kgM1",
             });
         })();
 
-        // 第二步：定义发送邮件的函数
         function sendEmail(event) {
-            event.preventDefault(); // 阻止表单默认的刷新行为
+            event.preventDefault();
 
-            // 获取提交按钮并显示“发送中...”状态
             const submitBtn = document.getElementById('submitBtn');
             const originalBtnText = submitBtn.innerText;
             submitBtn.innerText = '发送中...';
             submitBtn.disabled = true;
 
-            // 收集表单数据，这些 name 属性必须和模板里的变量名一致
+            // 收集表单数据
             const templateParams = {
                 from_name: document.getElementById('from_name').value,
                 from_email: document.getElementById('from_email').value,
@@ -40,19 +38,17 @@
                 message_html: document.getElementById('message_html').value,
             };
 
-            // 第三步：调用EmailJS的API发送邮件
+            // 【重要】把 "你的Service ID" 和 "你的Template ID" 替换成你在 EmailJS 后台拿到的真实ID
             emailjs.send('service_ri1918', 'template_ri1918', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     document.getElementById('message').innerHTML = '<span class="success">✅ 信息发送成功！我会尽快回复您。</span>';
-                    // 发送成功后，清空表单
                     document.getElementById('contactForm').reset();
                 }, function(error) {
                     console.log('FAILED...', error);
                     document.getElementById('message').innerHTML = '<span class="error">❌ 发送失败，请稍后重试或直接联系我。</span>';
                 })
                 .finally(() => {
-                    // 恢复按钮状态
                     submitBtn.innerText = originalBtnText;
                     submitBtn.disabled = false;
                 });
@@ -62,10 +58,10 @@
 <body>
     <h2>📧 给我留言</h2>
     <form id="contactForm" onsubmit="sendEmail(event)">
-        <input type="text" id="from_name" name="from_name" placeholder="你的名字" required>
-        <input type="email" id="from_email" name="from_email" placeholder="你的邮箱" required>
-        <input type="text" id="subject" name="subject" placeholder="主题" required>
-        <textarea id="message_html" name="message_html" rows="5" placeholder="在这里输入你想说的话..." required></textarea>
+        <input type="text" id="from_name" placeholder="你的名字" required>
+        <input type="email" id="from_email" placeholder="你的邮箱" required>
+        <input type="text" id="subject" placeholder="主题" required>
+        <textarea id="message_html" rows="5" placeholder="在这里输入你想说的话..." required></textarea>
         <button type="submit" id="submitBtn">📨 发送消息</button>
     </form>
     <div id="message"></div>
